@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"net/http"
 
+	"github.com/alnah/go-httpserver/internal/auth"
 	"github.com/google/uuid"
 )
 
@@ -15,9 +16,19 @@ func (cfg *apiConfig) handlerUserUpgradeMembership(w http.ResponseWriter, r *htt
 		} `json:"data"`
 	}
 
+	apiKey, err := auth.GetAPIKey(r.Header)
+	if err != nil {
+		respondWithError(w, http.StatusUnauthorized, "Couldn't find API key", err)
+		return
+	}
+	if apiKey != cfg.polkaAPIKey {
+		respondWithError(w, http.StatusUnauthorized, "Couldn't validate Polka API key", err)
+		return
+	}
+
 	params := parameters{}
 	decoder := json.NewDecoder(r.Body)
-	err := decoder.Decode(&params)
+	err = decoder.Decode(&params)
 	if err != nil {
 		respondWithError(w, http.StatusInternalServerError, "Couldn't decode parameters", err)
 		return
