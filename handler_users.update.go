@@ -1,7 +1,6 @@
 package main
 
 import (
-	"context"
 	"encoding/json"
 	"net/http"
 
@@ -13,6 +12,9 @@ func (cfg *apiConfig) handlerUsersUpdate(w http.ResponseWriter, r *http.Request)
 	type parameters struct {
 		Email    string `json:"email"`
 		Password string `json:"password"`
+	}
+	type response struct {
+		User
 	}
 
 	accessToken, err := auth.GetBearerToken(r.Header)
@@ -41,7 +43,7 @@ func (cfg *apiConfig) handlerUsersUpdate(w http.ResponseWriter, r *http.Request)
 		return
 	}
 
-	dbUser, err := cfg.db.UpdateUserEmailAndPasswordByID(context.Background(), database.UpdateUserEmailAndPasswordByIDParams{
+	dbUser, err := cfg.db.UpdateUserEmailAndPasswordByID(r.Context(), database.UpdateUserEmailAndPasswordByIDParams{
 		ID:             userID,
 		Email:          params.Email,
 		HashedPassword: newHashedPassword,
@@ -51,10 +53,12 @@ func (cfg *apiConfig) handlerUsersUpdate(w http.ResponseWriter, r *http.Request)
 		return
 	}
 
-	respondWithJSON(w, http.StatusOK, User{
-		ID:        dbUser.ID,
-		Email:     dbUser.Email,
-		CreatedAt: dbUser.CreatedAt,
-		UpdatedAt: dbUser.UpdatedAt,
-	})
+	respondWithJSON(w, http.StatusOK, response{
+		User{
+			ID:          dbUser.ID,
+			Email:       dbUser.Email,
+			IsChirpyRed: dbUser.IsChirpyRed,
+			CreatedAt:   dbUser.CreatedAt,
+			UpdatedAt:   dbUser.UpdatedAt,
+		}})
 }

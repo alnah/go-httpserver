@@ -1,7 +1,6 @@
 package main
 
 import (
-	"context"
 	"net/http"
 
 	"github.com/alnah/go-httpserver/internal/auth"
@@ -29,7 +28,7 @@ func (cfg *apiConfig) handlerChirpsDelete(w http.ResponseWriter, r *http.Request
 		return
 	}
 
-	dbChirp, err := cfg.db.GetChirp(context.Background(), chirpID)
+	dbChirp, err := cfg.db.GetChirp(r.Context(), chirpID)
 	if err != nil {
 		respondWithError(w, http.StatusNotFound, "Coudln't found chirp", err)
 		return
@@ -40,7 +39,7 @@ func (cfg *apiConfig) handlerChirpsDelete(w http.ResponseWriter, r *http.Request
 		return
 	}
 
-	err = cfg.db.DeleteChirp(context.Background(), database.DeleteChirpParams{
+	err = cfg.db.DeleteChirp(r.Context(), database.DeleteChirpParams{
 		ID:     chirpID,
 		UserID: userID,
 	})
@@ -48,5 +47,5 @@ func (cfg *apiConfig) handlerChirpsDelete(w http.ResponseWriter, r *http.Request
 		respondWithError(w, http.StatusInternalServerError, "Couldn't delete chirp", err)
 		return
 	}
-	respondWithJSON(w, http.StatusNoContent, nil)
+	w.WriteHeader(http.StatusNoContent)
 }
