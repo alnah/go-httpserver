@@ -22,7 +22,7 @@ func main() {
 	const filepathRoot = "."
 	const port = "8088"
 
-	godotenv.Load()
+	_ = godotenv.Load()
 	dbURL := os.Getenv("DB_URL")
 	if dbURL == "" {
 		log.Fatal("DB_URL must be set")
@@ -49,9 +49,10 @@ func main() {
 	mux.Handle("/app/", fsHandler)
 
 	mux.HandleFunc("GET /api/healthz", handlerReadiness)
-	mux.HandleFunc("POST /api/validate_chirp", handlerChirpsValidate)
 
 	mux.HandleFunc("POST /api/users", apiCfg.handlerUsersCreate)
+
+	mux.HandleFunc("POST /api/chirps", apiCfg.handlerChirpsCreate)
 
 	mux.HandleFunc("POST /admin/reset", apiCfg.handlerReset)
 	mux.HandleFunc("GET /admin/metrics", apiCfg.handlerMetrics)
