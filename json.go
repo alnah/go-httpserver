@@ -6,6 +6,8 @@ import (
 	"net/http"
 )
 
+// respondWithError logs the provided error (if any) and sends a JSON error response
+// with the specified HTTP status code and message.
 func respondWithError(w http.ResponseWriter, code int, msg string, err error) {
 	if err != nil {
 		log.Println(err)
@@ -21,6 +23,8 @@ func respondWithError(w http.ResponseWriter, code int, msg string, err error) {
 	})
 }
 
+// respondWithJSON sends a JSON response with the provided payload and HTTP status code.
+// It sets the Content-Type header to "application/json" and handles marshalling errors.
 func respondWithJSON(w http.ResponseWriter, code int, payload any) {
 	w.Header().Set("Content-Type", "application/json")
 	dat, err := json.Marshal(payload)

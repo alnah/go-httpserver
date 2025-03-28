@@ -12,14 +12,23 @@ import (
 	_ "github.com/lib/pq"
 )
 
+// apiConfig holds configuration and dependencies for the HTTP API server.
+// It contains metrics, database access, and authentication settings.
 type apiConfig struct {
+	// fileserverHits counts the number of times the file server has been accessed.
 	fileserverHits atomic.Int32
-	db             *database.Queries
-	platform       string
-	jwtSecret      string
-	polkaAPIKey    string
+	// db provides access to database queries.
+	db *database.Queries
+	// platform indicates the running environment (e.g. "dev").
+	platform string
+	// jwtSecret is used to sign and validate JWT tokens.
+	jwtSecret string
+	// polkaAPIKey is the API key used for validating Polka webhook requests.
+	polkaAPIKey string
 }
 
+// main initializes the server configuration, connects to the database, sets up HTTP routes,
+// and starts the HTTP server.
 func main() {
 	const filepathRoot = "."
 	const port = "8088"

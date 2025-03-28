@@ -12,14 +12,23 @@ import (
 	"github.com/google/uuid"
 )
 
+// Chirp represents a short message (chirp) posted by a user.
 type Chirp struct {
-	ID        uuid.UUID `json:"id"`
+	// ID is the unique identifier of the chirp.
+	ID uuid.UUID `json:"id"`
+	// CreatedAt is the timestamp when the chirp was created.
 	CreatedAt time.Time `json:"created_at"`
+	// UpdatedAt is the timestamp when the chirp was last updated.
 	UpdatedAt time.Time `json:"updated_at"`
-	UserID    uuid.UUID `json:"user_id"`
-	Body      string    `json:"body"`
+	// UserID is the identifier of the user who posted the chirp.
+	UserID uuid.UUID `json:"user_id"`
+	// Body is the content of the chirp.
+	Body string `json:"body"`
 }
 
+// handlerChirpsCreate creates a new chirp.
+// It validates the user's JWT, decodes the chirp content, cleans it by filtering banned words,
+// and inserts the new chirp into the database.
 func (cfg *apiConfig) handlerChirpsCreate(w http.ResponseWriter, r *http.Request) {
 	type parameters struct {
 		Body string `json:"body"`
@@ -68,6 +77,8 @@ func (cfg *apiConfig) handlerChirpsCreate(w http.ResponseWriter, r *http.Request
 	})
 }
 
+// validateChirp checks that the chirp's body does not exceed the maximum allowed length
+// and filters out any banned words. It returns the cleaned chirp or an error.
 func validateChirp(body string) (string, error) {
 	const maxChirpLength = 140
 	if len(body) > maxChirpLength {
@@ -83,6 +94,7 @@ func validateChirp(body string) (string, error) {
 	return cleaned, nil
 }
 
+// getCleanedBody replaces banned words in the chirp body with asterisks.
 func getCleanedBody(body string, badWords map[string]struct{}) string {
 	words := strings.Split(body, " ")
 	for i, word := range words {

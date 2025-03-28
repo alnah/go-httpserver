@@ -8,6 +8,9 @@ import (
 	"github.com/alnah/go-httpserver/internal/database"
 )
 
+// handlerUsersUpdate updates a user's email and password.
+// It extracts the JWT from the header, decodes new credentials from the request,
+// hashes the new password, updates the user in the database, and returns the updated user.
 func (cfg *apiConfig) handlerUsersUpdate(w http.ResponseWriter, r *http.Request) {
 	type parameters struct {
 		Email    string `json:"email"`

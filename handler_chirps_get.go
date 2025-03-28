@@ -8,6 +8,8 @@ import (
 	"github.com/google/uuid"
 )
 
+// handlerChirpsGet retrieves a single chirp based on its ID.
+// It parses the chirp ID from the URL, fetches the chirp from the database, and returns it as JSON.
 func (cfg *apiConfig) handlerChirpsGet(w http.ResponseWriter, r *http.Request) {
 	chirpIDString := r.PathValue("chirpID")
 	chirpID, err := uuid.Parse(chirpIDString)
@@ -31,6 +33,8 @@ func (cfg *apiConfig) handlerChirpsGet(w http.ResponseWriter, r *http.Request) {
 	})
 }
 
+// handlerChirpsRetrieve retrieves a list of chirps.
+// It supports optional filtering by author ID and sorting (ascending or descending) based on query parameters.
 func (cfg *apiConfig) handlerChirpsRetrieve(w http.ResponseWriter, r *http.Request) {
 	var authorID uuid.UUID
 	var dbChirps []database.Chirp

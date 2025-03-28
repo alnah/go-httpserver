@@ -8,6 +8,8 @@ import (
 	"github.com/google/uuid"
 )
 
+// handlerChirpsDelete deletes a chirp if the authenticated user owns it.
+// It validates the chirp ID, the JWT from the request, and then removes the chirp from the database.
 func (cfg *apiConfig) handlerChirpsDelete(w http.ResponseWriter, r *http.Request) {
 	chirpIDString := r.PathValue("chirpID")
 	chirpID, err := uuid.Parse(chirpIDString)

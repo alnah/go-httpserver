@@ -9,6 +9,9 @@ import (
 	"github.com/alnah/go-httpserver/internal/database"
 )
 
+// handlerLogin authenticates a user.
+// It verifies credentials, generates an access token (JWT) and a refresh token, stores the refresh token,
+// and returns them in a JSON response along with user details.
 func (cfg *apiConfig) handlerLogin(w http.ResponseWriter, r *http.Request) {
 	type parameters struct {
 		Password string `json:"password"`

@@ -10,15 +10,26 @@ import (
 	"github.com/google/uuid"
 )
 
+// User represents an application user.
+// Fields are JSON-tagged for external representation, with internal fields (like HashedPassword) omitted.
 type User struct {
-	ID             uuid.UUID `json:"id"`
-	Email          string    `json:"email"`
-	IsChirpyRed    bool      `json:"is_chirpy_red"`
-	CreatedAt      time.Time `json:"created_at"`
-	UpdatedAt      time.Time `json:"updated_at"`
-	HashedPassword string    `json:"-"` // For internal use only.
+	// ID is the unique identifier for the user.
+	ID uuid.UUID `json:"id"`
+	// Email is the user's email address.
+	Email string `json:"email"`
+	// IsChirpyRed indicates whether the user has an upgraded membership.
+	IsChirpyRed bool `json:"is_chirpy_red"`
+	// CreatedAt records when the user was created.
+	CreatedAt time.Time `json:"created_at"`
+	// UpdatedAt records the last time the user was updated.
+	UpdatedAt time.Time `json:"updated_at"`
+	// HashedPassword stores the user's password hash (internal use only).
+	HashedPassword string `json:"-"` // For internal use only.
 }
 
+// handlerUsersCreate creates a new user.
+// It decodes JSON parameters, hashes the password, creates the user in the database,
+// and returns the created user as JSON.
 func (cfg *apiConfig) handlerUsersCreate(w http.ResponseWriter, r *http.Request) {
 	type parameters struct {
 		Password string `json:"password"`

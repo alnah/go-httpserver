@@ -8,6 +8,8 @@ import (
 	"github.com/google/uuid"
 )
 
+// handlerUserUpgradeMembership upgrades a user's membership when a valid webhook event is received.
+// It validates the API key and event type, and then updates the user record in the database.
 func (cfg *apiConfig) handlerUserUpgradeMembership(w http.ResponseWriter, r *http.Request) {
 	type parameters struct {
 		Event string `json:"event"`

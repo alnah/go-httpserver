@@ -7,6 +7,8 @@ import (
 	"github.com/alnah/go-httpserver/internal/auth"
 )
 
+// handlerRefresh generates a new access token using a provided refresh token.
+// It validates the refresh token, retrieves the corresponding user, and returns a new JWT.
 func (cfg *apiConfig) handlerRefresh(w http.ResponseWriter, r *http.Request) {
 	type response struct {
 		Token string `json:"token"`
@@ -39,6 +41,9 @@ func (cfg *apiConfig) handlerRefresh(w http.ResponseWriter, r *http.Request) {
 	})
 }
 
+// handlerRevoke revokes a refresh token, effectively terminating the session.
+// It extracts the token from the request header, revokes it in the database,
+// and returns a no-content status on success.
 func (cfg *apiConfig) handlerRevoke(w http.ResponseWriter, r *http.Request) {
 	refreshToken, err := auth.GetBearerToken(r.Header)
 	if err != nil {

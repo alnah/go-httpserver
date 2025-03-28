@@ -16,15 +16,12 @@ import (
 
 type TokenType string
 
-const (
-	// TokenTypeAccess -
-	TokenTypeAccess TokenType = "chirpy-access"
-)
+const TokenTypeAccess TokenType = "chirpy-access"
 
-// ErrNoAuthHeaderIncluded -
 var ErrNoAuthHeaderIncluded = errors.New("no auth header included in request")
 
-// HashPassword -
+// HashPassword generates a bcrypt hash of the given password.
+// It returns the hashed password as a string or an error if hashing fails.
 func HashPassword(password string) (string, error) {
 	dat, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
 	if err != nil {
@@ -33,12 +30,14 @@ func HashPassword(password string) (string, error) {
 	return string(dat), nil
 }
 
-// CheckPasswordHash -
+// CheckPasswordHash compares a plaintext password with its bcrypt hashed version.
+// It returns an error if the password does not match the hash.
 func CheckPasswordHash(password, hash string) error {
 	return bcrypt.CompareHashAndPassword([]byte(hash), []byte(password))
 }
 
-// MakeJWT -
+// MakeJWT generates a JWT token for the given user ID with the provided secret and expiration duration.
+// It returns the signed token string or an error if token creation fails.
 func MakeJWT(
 	userID uuid.UUID,
 	tokenSecret string,
@@ -54,7 +53,8 @@ func MakeJWT(
 	return token.SignedString(signingKey)
 }
 
-// ValidateJWT -
+// ValidateJWT validates a JWT token using the provided secret.
+// It returns the user ID embedded in the token if valid, or an error if the token is invalid.
 func ValidateJWT(tokenString, tokenSecret string) (uuid.UUID, error) {
 	claimsStruct := jwt.RegisteredClaims{}
 	token, err := jwt.ParseWithClaims(
@@ -86,7 +86,8 @@ func ValidateJWT(tokenString, tokenSecret string) (uuid.UUID, error) {
 	return id, nil
 }
 
-// GetAuthToken -
+// GetAuthToken extracts the authentication token from the HTTP Authorization header using the specified scheme.
+// It returns the token or an error if the header is missing or malformed.
 func GetAuthToken(headers http.Header, scheme string) (string, error) {
 	authHeader := headers.Get("Authorization")
 	if authHeader == "" {
@@ -101,18 +102,20 @@ func GetAuthToken(headers http.Header, scheme string) (string, error) {
 	return splitAuth[1], nil
 }
 
-// GetBearerToken -
+// GetBearerToken extracts the Bearer token from the HTTP Authorization header.
+// It returns the token string or an error if the token is missing or malformed.
 func GetBearerToken(headers http.Header) (string, error) {
 	return GetAuthToken(headers, "Bearer")
 }
 
-// GetAPIKey -
+// GetAPIKey extracts the API key from the HTTP Authorization header using the "ApiKey" scheme.
+// It returns the API key string or an error if not found.
 func GetAPIKey(headers http.Header) (string, error) {
 	return GetAuthToken(headers, "ApiKey")
 }
 
-// MakeRefreshToken makes a random 256 bit token
-// encoded in hex
+// MakeRefreshToken generates a secure random 256-bit token encoded in hexadecimal.
+// It returns the refresh token or an error if token generation fails.
 func MakeRefreshToken() (string, error) {
 	token := make([]byte, 32)
 	_, err := rand.Read(token)
