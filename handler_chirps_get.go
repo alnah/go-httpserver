@@ -2,6 +2,7 @@ package main
 
 import (
 	"net/http"
+	"slices"
 
 	"github.com/alnah/go-httpserver/internal/database"
 	"github.com/google/uuid"
@@ -45,6 +46,16 @@ func (cfg *apiConfig) handlerChirpsRetrieve(w http.ResponseWriter, r *http.Reque
 		dbChirps, err = cfg.db.GetChirpsByUserID(r.Context(), authorID)
 	} else {
 		dbChirps, err = cfg.db.GetChirps(r.Context())
+	}
+	sortParam := r.URL.Query().Get("sort")
+	switch sortParam {
+	case "asc":
+		break
+	case "desc":
+		slices.Reverse(dbChirps)
+	default:
+		respondWithError(w, http.StatusBadRequest, "Invalid sort param, must be 'asc' or 'desc'", err)
+		return
 	}
 
 	if err != nil {
