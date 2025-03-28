@@ -21,7 +21,6 @@ HTTP server with JWT authentication, chirp management, and admin features.
 - Go 1.21+
 - PostgreSQL
 - [golangci-lint](https://golangci-lint.run/)
-- [goreleaser](https://goreleaser.com/)
 
 ```bash
 git clone https://github.com/alnah/go-httpserver
